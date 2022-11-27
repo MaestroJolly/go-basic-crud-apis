@@ -54,16 +54,33 @@ func createBooks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+func updateBook(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	w.Header().Set("Content-Type", "application/json")
+	for index, book := range books {
+		if book.ID == id {
+			books = append(books[:index], books[index+1:]...)
+			var book Book
+			_ = json.NewDecoder(r.Body).Decode(&book)
+			book.ID = strconv.Itoa(rand.Intn(10000))
+			books = append(books, book)
+			json.NewEncoder(w).Encode(books)
+			return
+		}
+	}
+	json.NewEncoder(w).Encode(books)
+}
+
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	w.Header().Set("Content-Type", "application/json")
-	deletedBooks := []Book{}
-	for _, book := range books {
-		if book.ID != id {
-			deletedBooks = append(deletedBooks, book)
+	for index, book := range books {
+		if book.ID == id {
+			books = append(books[:index], books[index+1:]...)
+			break
 		}
 	}
-	json.NewEncoder(w).Encode(deletedBooks)
+	json.NewEncoder(w).Encode(books)
 }
 
 func main() {
@@ -76,6 +93,7 @@ func main() {
 	r.HandleFunc("/api/books", getBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
 	r.HandleFunc("/api/books", createBooks).Methods("POST")
+	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
