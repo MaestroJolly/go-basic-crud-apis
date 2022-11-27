@@ -11,11 +11,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Author Struct
 type Author struct {
 	Title string `json:"title"`
 	Name  string `json:"name"`
 }
 
+// Book Struct
 type Book struct {
 	ID     string  `json:"id"`
 	Title  string  `json:"title"`
@@ -24,15 +26,18 @@ type Book struct {
 
 var books []Book
 
+// printHelloWorld function
 func printHelloWorld(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World")
 }
 
+// get Books function
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(books)
 }
 
+// get a Book function
 func getBook(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	w.Header().Set("Content-Type", "application/json")
@@ -45,6 +50,7 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&Book{})
 }
 
+// create a Book function
 func createBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var book Book
@@ -54,6 +60,7 @@ func createBooks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+// update a Book function
 func updateBook(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	w.Header().Set("Content-Type", "application/json")
@@ -71,6 +78,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+// delete a Book function
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	w.Header().Set("Content-Type", "application/json")
